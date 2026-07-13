@@ -69,9 +69,16 @@ def fetch_game_data():
 
             for game in games:
                 pp.pprint(game)
+            
+            return games
+
 
         else:
             print(f"Failed to fetch data. Status code: {response.status_code}")
 
     except requests.exceptions.RequestException as e:
         print(f"An error occurred: {e}")
+
+
+
+fetch_game_data()
