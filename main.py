@@ -1,30 +1,15 @@
-import os
-import requests
-import pprint as pp
-from dotenv import load_dotenv
+from api_call import fetch_game_data
+from mongodb_interaction import save_to_database
 
-# Load environment api key from .env file
-load_dotenv()
-api_key = os.getenv("API_KEY")
-
-BASE_URL = "https://api.rawg.io/api/games"
-
-params = {
-    "key": api_key,
-    "page_size": 1
-}
-
-try:
-    response = requests.get(BASE_URL, params=params)
+def run_pipeline():
+    print("--- STARTING PIPELINE ---")
     
-    response.raise_for_status()
+    pass
     
-    data = response.json()
+    print("--- PIPELINE COMPLETE ---")
 
-    #print(f"Found {len(data['results'])} games:\n")
-    pp.pprint(data['results'])
+# This is a standard Python safeguard. It ensures the script only runs 
+# if you execute this file directly (e.g., 'python main.py')
+if __name__ == "__main__":
+    run_pipeline()
 
-except requests.exceptions.HTTPError as err:
-    print(f"HTTP Error occurred: {err}")
-except Exception as err:
-    print(f"An error occurred: {err}")
