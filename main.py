@@ -4,7 +4,7 @@ from mongodb_interaction import save_to_database
 def run_pipeline():
     print("--- STARTING PIPELINE ---")
     
-    pass
+    games = fetch_game_data()
     
     print("--- PIPELINE COMPLETE ---")
 

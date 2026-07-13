@@ -72,7 +72,6 @@ def fetch_game_data():
             
             return games
 
-
         else:
             print(f"Failed to fetch data. Status code: {response.status_code}")
 
@@ -80,5 +79,3 @@ def fetch_game_data():
         print(f"An error occurred: {e}")
 
 
-
-fetch_game_data()
