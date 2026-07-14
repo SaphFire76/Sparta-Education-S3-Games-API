@@ -3,12 +3,10 @@ import requests
 import pprint as pp
 from dotenv import load_dotenv
 
-# Load environment api key from .env file
-load_dotenv()
-api_key = os.getenv("API_KEY")
-
 def fetch_game_data():
-
+    # Load environment api key from .env file
+    load_dotenv()
+    api_key = os.getenv("API_KEY")
 
     url = "https://rawg.io/api/games"
 
