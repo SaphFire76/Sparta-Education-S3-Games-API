@@ -3,6 +3,11 @@ import requests
 import pprint as pp
 from dotenv import load_dotenv
 
+
+
+
+
+
 def fetch_game_data():
     # Load environment api key from .env file
     load_dotenv()
@@ -16,11 +21,19 @@ def fetch_game_data():
         "ordering": "-metacritic"
     }
 
+    def fetch_game_details(game_id, api_key):
+        url = f"https://rawg.io/api/games/{game_id}"
+
+        response = requests.get(url, params={"key": api_key})
+        response.raise_for_status()
+
+        return response.json()
+
     try:
         response = requests.get(url, params=query_params)
+        
 
         if response.status_code == 200:
-
             data = response.json()
             games_list = data.get("results", [])
 
@@ -28,19 +41,37 @@ def fetch_game_data():
             games = []
 
             for game in games_list:
-                # Fetch additional details for each game using its ID
-                response2 = requests.get(url+f'/{game.get("id")}', params=query_params)
-                gamedata = response2.json()
-                
 
+                gamedata = fetch_game_details(game.get("id"), api_key)
+                # Fetch additional details for each game using its ID
+   
                 game_document = {
                     "rawg_id": game.get("id"),
+                    "slug": game.get("slug"),
                     "name": game.get("name"),
+                    "tba": game.get("tba"),
                     "release_date": game.get("released"),
-                    "rating": game.get("rating"),
+                    # "rating": game.get("rating"),
                     "metacritic_score": game.get("metacritic"),
                     "playtime_hours": game.get("playtime"),
+
                     "description": gamedata.get("description_raw"),
+
+                    # "website": gamedata.get("website"),
+
+                    "esrb_rating": (
+                        gamedata.get("esrb_rating", {}) or {}
+                        ).get("name"),
+
+                    "developers": [
+                        developer.get("name")
+                        for developer in gamedata.get("developers", [])
+                    ],
+
+                    "publishers": [
+                        publisher.get("name")
+                        for publisher in gamedata.get("publishers", [])
+                    ],
 
                     "genres": [
                         genre.get("name")
