@@ -1,5 +1,6 @@
 from api_call import fetch_game_data
-from mongodb_interaction import save_to_database
+from mongodb_interaction import fetch_from_database, save_to_database
+from s3_interaction import save_to_s3
 
 def run_pipeline():
     print("--- STARTING PIPELINE ---")
@@ -7,6 +8,14 @@ def run_pipeline():
     games = fetch_game_data()
     
     save_to_database(games)
+
+    # -----------TODO--------------
+    
+    # games = fetch_from_database()
+
+    # save_to_s3(games)
+
+    # -----------------------------
 
     print("--- PIPELINE COMPLETE ---")
 

@@ -44,3 +44,5 @@ def save_to_database(game_list):
             client.close()
             print("MongoDB connection closed.")
 
+def fetch_from_database(query):
+    pass
