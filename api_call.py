@@ -4,10 +4,6 @@ import pprint as pp
 from dotenv import load_dotenv
 
 
-
-
-
-
 def fetch_game_data():
     # Load environment api key from .env file
     load_dotenv()
@@ -96,8 +92,9 @@ def fetch_game_data():
             # Just to check everything worked
             print(f"Extracted {len(games)} games.\n")
 
-            for game in games:
-                pp.pprint(game)
+            # Pretty print the list of games to verify the call
+            # for game in games:
+            #     pp.pprint(game)
             
             return games
 
@@ -106,5 +103,3 @@ def fetch_game_data():
 
     except requests.exceptions.RequestException as e:
         print(f"An error occurred: {e}")
-
-

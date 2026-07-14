@@ -6,6 +6,8 @@ def run_pipeline():
     
     games = fetch_game_data()
     
+    save_to_database(games)
+
     print("--- PIPELINE COMPLETE ---")
 
 # This is a standard Python safeguard. It ensures the script only runs 

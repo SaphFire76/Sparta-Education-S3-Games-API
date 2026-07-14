@@ -2,6 +2,7 @@ import os
 from pymongo import MongoClient, errors
 from dotenv import load_dotenv
 
+
 # Implementation for saving data to MongoDB
 def save_to_database(game_list):
     print("Connecting to MongoDB...")
