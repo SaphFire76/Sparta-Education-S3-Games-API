@@ -43,11 +43,12 @@ def run_pipeline():
     # Reads and prints the platform along with the total number of games available on that platform from the database.
     games_by_platform()
 
-
-
+    # Fetches all except vectors from db to insert into AWS S3
+    games = fetch_from_database(['background_image', 'description', 'genres', 'platforms', 'metacritic_score', 'name', 'playtime_hours', 'publishers', 'release_date', 'slug', 'tba', 'tags', 'esrb_rating', 'developers', 'rawg_id'])
 
     
     games = fetch_from_database(["description"])
+
 
     # Generate embeddings for the game descriptions
     games_with_embeddings = generate_embeddings(games)
@@ -78,4 +79,6 @@ def run_pipeline():
 # if you execute this file directly (e.g., 'python main.py')
 if __name__ == "__main__":
     run_pipeline()
+
+
 

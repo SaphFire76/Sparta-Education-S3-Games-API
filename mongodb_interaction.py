@@ -62,14 +62,15 @@ def fetch_from_database(keys_to_fetch):
         db = client["video_game_db"]
         collection = db["games"]
         
-        # 1. Build the projection dictionary
-        # We ALWAYS exclude the MongoDB _id (0 means exclude)
-        # We ALWAYS include the rawg_id (1 means include)
-        projection = {"_id": 0, "rawg_id": 1}
-        
-        # 2. Loop through the user's list and add those keys to our projection
-        for key in keys_to_fetch:
-            projection[key] = 1
+        if keys_to_fetch == 1:
+            # If the user passes 1, we only tell MongoDB to hide the internal _id. 
+            # By not specifying any other keys, MongoDB automatically returns EVERYTHING else.
+            projection = {"_id": 0}
+        else:
+            # Otherwise, we build the specific projection dictionary like normal
+            projection = {"_id": 0, "rawg_id": 1}
+            for key in keys_to_fetch:
+                projection[key] = 1
             
         # 3. Fetch the data
         # {} means "find everything", and our projection dictionary filters the fields
