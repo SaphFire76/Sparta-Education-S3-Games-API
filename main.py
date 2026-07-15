@@ -1,7 +1,8 @@
 from api_call import fetch_game_data
-from mongodb_interaction import fetch_from_database, save_to_database
+from mongodb_interaction import fetch_from_database, read_high_metacritic_games, save_to_database, create_game, delete_game, games_by_platform
 from s3_interaction import save_to_s3
 from recommendation_algorithm import generate_embeddings, generate_faiss_index, search_similar_games
+
 
 def run_pipeline():
     print("--- STARTING PIPELINE ---")
@@ -9,6 +10,42 @@ def run_pipeline():
     games = fetch_game_data()
     
     save_to_database(games)
+
+    # #Create a new game document to insert into the database
+    # new_game = {
+    #     "rawg_id": 123456,
+    #     "slug": "New Game",
+    #     "name": "New Game Name",
+    #     "tba": False,
+    #     "release_date": "2024-01-01",
+    #     "metacritic_score": 85,
+    #     "playtime_hours": 10,
+    #     "description": "This is a description of the new game.",
+    #     "esrb_rating": "E",
+    #     "developers": ["New Game Developer"],
+    #     "publishers": ["New Game Publisher"],
+    #     "genres": ["Action", "Adventure"],
+    #     "platforms": ["PC", "PlayStation 5"],
+    #     "tags": ["Multiplayer", "Open World"],
+    #     "background_image": "https://example.com/new-game-image.jpg"
+    # }
+
+    # create_game(new_game)
+
+    # Read and print games with a Metacritic score of 90 or higher
+    # read_high_metacritic_games()
+
+
+    #deletes a game from the database using its name.
+    # delete_game("New Game Name")
+
+
+    # Reads and prints the platform along with the total number of games available on that platform from the database.
+    games_by_platform()
+
+
+
+
     
     games = fetch_from_database(["description"])
 
