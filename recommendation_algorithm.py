@@ -1,4 +1,6 @@
 from sentence_transformers import SentenceTransformer
+import faiss
+import numpy as np
 
 model = SentenceTransformer('all-MiniLM-L6-v2')
 
@@ -26,3 +28,53 @@ def generate_embeddings(game_descriptions):
         
     print("Embeddings generated successfully!")
     return vector_objects
+
+def generate_faiss_index(game_vectors):
+    """
+    Takes a list of dicts: [{"rawg_id": 123, "vector": [...]}]
+    Returns a FAISS index built from the vectors.
+    """
+    
+    print(f"Building FAISS index for {len(game_vectors)} games...")
+    
+    # Extract the vectors from the list of dictionaries
+    vector_list = [game["vector"] for game in game_vectors]
+    
+    # Convert to numpy array
+    embeddings_array = np.array(vector_list).astype('float32')
+    
+    # Create a FAISS Index
+    dimension = embeddings_array.shape[1]
+    index = faiss.IndexFlatL2(dimension)
+    
+    # Add embeddings into the index
+    index.add(embeddings_array)
+    
+    print("FAISS index built successfully!")
+    return index
+
+
+def search_similar_games(index, game_vectors, query, k=5):
+    """
+    Searches for the top k similar games based on the query vector.
+    
+    Args:
+        index: FAISS index built from game vectors.
+        game_vectors: List of dicts containing rawg_id and vector.
+        query: The query string for which to find similar games.
+        k: Number of similar games to retrieve.
+    """
+
+    # Generate embedding for the query
+    query_vector = model.encode([query]).astype('float32')
+    
+    # Perform the search
+    D, I = index.search(query_vector, k)
+    
+    # Retrieve the rawg_ids of the similar games
+    similar_games = []
+    for idx in I[0]:
+        if idx != -1 and idx < len(game_vectors): 
+            similar_games.append(game_vectors[idx]["rawg_id"])
+    
+    return similar_games
