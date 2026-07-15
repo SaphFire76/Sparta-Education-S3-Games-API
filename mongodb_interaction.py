@@ -92,6 +92,43 @@ def fetch_from_database(keys_to_fetch):
             print("MongoDB connection closed.")
 
 
+def fetch_games_by_id(game_ids):
+    """
+    Fetches games from the database based on a list of rawg_ids.
+    
+    Args:
+        game_ids (list): A list of rawg_id integers to fetch from the database.
+        
+    Returns:
+        list: A list of game documents matching the provided rawg_ids.
+    """
+    
+    print("Connecting to MongoDB...")
+    
+    try:
+        client = MongoClient(mongo_uri)
+        db = client["video_game_db"]
+        collection = db["games"]
+        
+        # Fetch games where rawg_id is in the provided list
+        cursor = collection.find({"rawg_id": {"$in": game_ids}}, {"_id": 0})
+        games_list = list(cursor)
+        
+        print(f"Successfully fetched {len(games_list)} games by ID from the database!")
+        return games_list
+
+    except errors.ConnectionFailure as e:
+        print(f"Could not connect to MongoDB. Error: {e}")
+        return []
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return []
+    finally:
+        if 'client' in locals():
+            client.close()
+            print("MongoDB connection closed.")
+
+
 def create_game(game):
 
     load_dotenv()

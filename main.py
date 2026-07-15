@@ -1,5 +1,5 @@
 from api_call import fetch_game_data
-from mongodb_interaction import fetch_from_database, read_high_metacritic_games, save_to_database, create_game, delete_game, games_by_platform
+from mongodb_interaction import fetch_from_database, fetch_games_by_id, read_high_metacritic_games, save_to_database, create_game, delete_game, games_by_platform
 from s3_interaction import save_to_s3
 from recommendation_algorithm import generate_embeddings, generate_faiss_index, search_similar_games
 
@@ -78,7 +78,19 @@ def run_pipeline():
 # This is a standard Python safeguard. It ensures the script only runs 
 # if you execute this file directly (e.g., 'python main.py')
 if __name__ == "__main__":
-    run_pipeline()
+    # run_pipeline()
+
+    games_with_embeddings = fetch_from_database(['vector'])
+
+    index = generate_faiss_index(games_with_embeddings)
+
+    similar_games = search_similar_games(index, games_with_embeddings, "A thrilling open-world adventure game with dragons and magic.", k=3)
+
+    search_results = fetch_games_by_id(similar_games)
+
+    print("\n--- Similar Games ---")
+    for game in search_results:
+        print(f"Name: {game['name']}, Description: {game['description']}")
 
 
 
