@@ -131,8 +131,6 @@ def fetch_games_by_id(game_ids):
 
 def create_game(game):
 
-    load_dotenv()
-    mongo_uri = os.getenv("MONGODB_URI", "mongodb://localhost:27017/")
 
     try:
         client = MongoClient(mongo_uri)
@@ -154,8 +152,7 @@ def create_game(game):
 
 def read_high_metacritic_games():
 
-    load_dotenv()
-    mongo_uri = os.getenv("MONGODB_URI", "mongodb://localhost:27017/")
+
 
     try:
         client = MongoClient(mongo_uri)
@@ -199,8 +196,7 @@ def read_high_metacritic_games():
 
 def update_metacritic_score(game_name, new_score):
 
-    load_dotenv()
-    mongo_uri = os.getenv("MONGODB_URI", "mongodb://localhost:27017/")
+
 
     try:
         client = MongoClient(mongo_uri)
@@ -234,8 +230,6 @@ def update_metacritic_score(game_name, new_score):
 
 def delete_game(game_name):
 
-    load_dotenv()
-    mongo_uri = os.getenv("MONGODB_URI", "mongodb://localhost:27017/")
 
     try:
 
@@ -266,8 +260,6 @@ def delete_game(game_name):
 
 def games_by_platform():
 
-    load_dotenv()
-    mongo_uri = os.getenv("MONGODB_URI", "mongodb://localhost:27017/")
 
     client = MongoClient(mongo_uri)
 
