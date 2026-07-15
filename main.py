@@ -82,7 +82,7 @@ if __name__ == "__main__":
 
     print("\n--- Similar Games ---")
     for game in search_results:
-        print(f"Name: {game['name']}, Description: {game['description']}")
+        print(f"Name: {game['name']}, \nDescription: {game['description']}, \nGenres: {game['genres']}, \nMetacritic Score: {game['metacritic_score']} \n\n\n")
 
 
 
