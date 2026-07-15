@@ -41,25 +41,30 @@ def run_pipeline():
 
 
     # Reads and prints the platform along with the total number of games available on that platform from the database.
-    games_by_platform()
+    # games_by_platform()
+
+ 
+
+
+    # # Generate embeddings for the game descriptions
+    # games_with_embeddings = generate_embeddings(games)
+
+    # save_to_database(games_with_embeddings)
+
+    # index = generate_faiss_index(games_with_embeddings)
+
+    # similar_games = search_similar_games(index, games_with_embeddings, "A thrilling open-world adventure game with dragons and magic.", k=3)
+
+    # print(similar_games)
+
 
     # Fetches all except vectors from db to insert into AWS S3
-    games = fetch_from_database(['background_image', 'description', 'genres', 'platforms', 'metacritic_score', 'name', 'playtime_hours', 'publishers', 'release_date', 'slug', 'tba', 'tags', 'esrb_rating', 'developers', 'rawg_id'])
+    gamesToUpload = fetch_from_database(['background_image', 'description', 'genres', 'platforms', 'metacritic_score', 'name', 'playtime_hours', 'publishers', 'release_date', 'slug', 'tba', 'tags', 'esrb_rating', 'developers', 'rawg_id'])
 
-    
-    games = fetch_from_database(["description"])
+    # Upload to S3
+    save_to_s3(gamesToUpload)
 
 
-    # Generate embeddings for the game descriptions
-    games_with_embeddings = generate_embeddings(games)
-
-    save_to_database(games_with_embeddings)
-
-    index = generate_faiss_index(games_with_embeddings)
-
-    similar_games = search_similar_games(index, games_with_embeddings, "A thrilling open-world adventure game with dragons and magic.", k=3)
-
-    print(similar_games)
 
     # games = fetch_games_by_id(similar_games)
 
