@@ -8,10 +8,10 @@ def run_pipeline():
     games = fetch_game_data()
     
     save_to_database(games)
-
-    # -----------TODO--------------
     
     # games = fetch_from_database()
+
+    # -----------TODO--------------
 
     # save_to_s3(games)
 
