@@ -3,19 +3,19 @@ from pymongo import MongoClient, errors
 from dotenv import load_dotenv
 import pprint as pp
 
+# Load MongoDB URI from .env file
+load_dotenv()
+mongo_uri = os.getenv("MONGODB_URI", "mongodb://localhost:27017/")
 
 # Implementation for saving data to MongoDB
 def save_to_database(game_list):
     print("Connecting to MongoDB...")
 
-    load_dotenv()
-    mongo_uri = os.getenv("MONGODB_URI", "mongodb://localhost:27017/")
-
     try:
         client = MongoClient(mongo_uri)
         
-        db = client["video_game_db"]      
-        collection = db["games"]           
+        db = client["video_game_db"]
+        collection = db["games"]
         
         print(f"Processing {len(game_list)} games...")
         inserted_count = 0
@@ -24,9 +24,9 @@ def save_to_database(game_list):
         # Loop through the list of dictionaries
         for game in game_list:
             result = collection.update_one(
-                {"rawg_id": game["rawg_id"]},  
-                {"$set": game},      
-                upsert=True               
+                {"rawg_id": game["rawg_id"]},
+                {"$set": game},
+                upsert=True
             )
             
             if result.upserted_id:
@@ -48,7 +48,7 @@ def save_to_database(game_list):
 
 def fetch_from_database(keys_to_fetch):
     """
-    Connects to MongoDB, fetches specific fields for all game documents, 
+    Connects to MongoDB, fetches specific fields for all game documents,
     and returns them as a list of dictionaries.
     
     Args:
@@ -57,13 +57,10 @@ def fetch_from_database(keys_to_fetch):
 
     print("Connecting to MongoDB...")
     
-    load_dotenv()
-    mongo_uri = os.getenv("MONGODB_URI", "mongodb://localhost:27017/")
-    
     try:
         client = MongoClient(mongo_uri)
-        db = client["video_game_db"]      
-        collection = db["games"]           
+        db = client["video_game_db"]
+        collection = db["games"]
         
         # 1. Build the projection dictionary
         # We ALWAYS exclude the MongoDB _id (0 means exclude)
@@ -81,7 +78,7 @@ def fetch_from_database(keys_to_fetch):
         
         print(f"Successfully fetched {len(games_list)} games from the database!")
         return games_list
-            
+
     except errors.ConnectionFailure as e:
         print(f"Could not connect to MongoDB. Error: {e}")
         return []

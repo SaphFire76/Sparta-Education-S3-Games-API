@@ -1,6 +1,7 @@
 from api_call import fetch_game_data
 from mongodb_interaction import fetch_from_database, read_high_metacritic_games, save_to_database, create_game, delete_game, games_by_platform
 from s3_interaction import save_to_s3
+from recommendation_algorithm import generate_embeddings
 
 
 def run_pipeline():
@@ -46,7 +47,12 @@ def run_pipeline():
 
 
     
-    # games = fetch_from_database()
+    games = fetch_from_database(["description"])
+
+    # Generate embeddings for the game descriptions
+    games_with_embeddings = generate_embeddings(games)
+
+    save_to_database(games_with_embeddings)
 
     # -----------TODO--------------
 
