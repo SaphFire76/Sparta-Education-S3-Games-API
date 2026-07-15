@@ -1,6 +1,7 @@
 from api_call import fetch_game_data
 from mongodb_interaction import fetch_from_database, save_to_database
 from s3_interaction import save_to_s3
+from recommendation_algorithm import generate_embeddings
 
 def run_pipeline():
     print("--- STARTING PIPELINE ---")
@@ -9,7 +10,12 @@ def run_pipeline():
     
     save_to_database(games)
     
-    # games = fetch_from_database()
+    games = fetch_from_database(["description"])
+
+    # Generate embeddings for the game descriptions
+    games_with_embeddings = generate_embeddings(games)
+
+    save_to_database(games_with_embeddings)
 
     # -----------TODO--------------
 

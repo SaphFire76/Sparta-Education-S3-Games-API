@@ -3,13 +3,13 @@ from pymongo import MongoClient, errors
 from dotenv import load_dotenv
 import pprint as pp
 
+# Load MongoDB URI from .env file
+load_dotenv()
+mongo_uri = os.getenv("MONGODB_URI", "mongodb://localhost:27017/")
 
 # Implementation for saving data to MongoDB
 def save_to_database(game_list):
     print("Connecting to MongoDB...")
-
-    load_dotenv()
-    mongo_uri = os.getenv("MONGODB_URI", "mongodb://localhost:27017/")
 
     try:
         client = MongoClient(mongo_uri)
@@ -56,9 +56,6 @@ def fetch_from_database(keys_to_fetch):
     """
 
     print("Connecting to MongoDB...")
-    
-    load_dotenv()
-    mongo_uri = os.getenv("MONGODB_URI", "mongodb://localhost:27017/")
     
     try:
         client = MongoClient(mongo_uri)
