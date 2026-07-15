@@ -1,4 +1,5 @@
 import os
+from time import time
 import requests
 import pprint as pp
 from dotenv import load_dotenv
@@ -7,56 +8,60 @@ from dotenv import load_dotenv
 load_dotenv()
 api_key = os.getenv("API_KEY")
 
-def fetch_game_data():
-    url = "https://rawg.io/api/games"
+def fetch_game_details(game_id, api_key):
+    url = f"https://rawg.io/api/games/{game_id}"
 
+    response = requests.get(url, params={"key": api_key})
+    response.raise_for_status()
+
+    return response.json()
+
+
+
+def fetch_game_data(target_count=100):
+    """
+    Fetches games from RAWG, following pagination until either
+    target_count games have been collected or there are no more pages.
+    """
+    url = "https://rawg.io/api/games"
     query_params = {
         "key": api_key,
-        "page_size": 5,
-        "ordering": "-metacritic"
+        "page_size": 40,  # RAWG caps this at 40 regardless of what you request
+        # "ordering": "-metacritic"
     }
 
-    def fetch_game_details(game_id, api_key):
-        url = f"https://rawg.io/api/games/{game_id}"
-
-        response = requests.get(url, params={"key": api_key})
-        response.raise_for_status()
-
-        return response.json()
+    games = []
 
     try:
-        response = requests.get(url, params=query_params)
-        
+        while url and len(games) < target_count:
+            response = requests.get(url, params=query_params)
 
-        if response.status_code == 200:
+            if response.status_code != 200:
+                print(f"Failed to fetch data. Status code: {response.status_code}")
+                break
+
             data = response.json()
             games_list = data.get("results", [])
 
-            # Create a new list to store the transformed documents
-            games = []
-
             for game in games_list:
+                if len(games) >= target_count:
+                    break
 
                 gamedata = fetch_game_details(game.get("id"), api_key)
-                # Fetch additional details for each game using its ID
-   
+
                 game_document = {
                     "rawg_id": game.get("id"),
                     "slug": game.get("slug"),
                     "name": game.get("name"),
                     "tba": game.get("tba"),
                     "release_date": game.get("released"),
-                    # "rating": game.get("rating"),
                     "metacritic_score": game.get("metacritic"),
                     "playtime_hours": game.get("playtime"),
-
                     "description": gamedata.get("description_raw"),
-
-                    # "website": gamedata.get("website"),
 
                     "esrb_rating": (
                         gamedata.get("esrb_rating", {}) or {}
-                        ).get("name"),
+                                    ).get("name"),
 
                     "developers": [
                         developer.get("name")
@@ -82,23 +87,22 @@ def fetch_game_data():
                         tag.get("name")
                         for tag in game.get("tags", [])
                     ],
-
+                    
                     "background_image": game.get("background_image")
                 }
 
                 games.append(game_document)
 
-            # Just to check everything worked
-            print(f"Extracted {len(games)} games.\n")
 
-            # Pretty print the list of games to verify the call
-            # for game in games:
-            #     pp.pprint(game)
-            
-            return games
+            print(f"Fetched {len(games)} games so far...")
 
-        else:
-            print(f"Failed to fetch data. Status code: {response.status_code}")
+            # RAWG gives you the full next-page URL (with query params already included)
+            url = data.get("next")
+            query_params = {}  # params are already baked into `next`, so clear these
+
+        print(f"\nExtracted {len(games)} games total.\n")
+        return games
 
     except requests.exceptions.RequestException as e:
         print(f"An error occurred: {e}")
+        return games  # return whatever was collected before the error

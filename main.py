@@ -70,19 +70,19 @@ def run_pipeline():
 # This is a standard Python safeguard. It ensures the script only runs 
 # if you execute this file directly (e.g., 'python main.py')
 if __name__ == "__main__":
-    # run_pipeline()
+    run_pipeline()
 
-    games_with_embeddings = fetch_from_database(['vector'])
+    # games_with_embeddings = fetch_from_database(['vector'])
 
-    index = generate_faiss_index(games_with_embeddings)
+    # index = generate_faiss_index(games_with_embeddings)
 
-    similar_games = search_similar_games(index, games_with_embeddings, "A thrilling open-world adventure game with dragons and magic.", k=3)
+    # similar_games = search_similar_games(index, games_with_embeddings, "A thrilling open-world adventure game with dragons and magic.", k=3)
 
-    search_results = fetch_games_by_id(similar_games)
+    # search_results = fetch_games_by_id(similar_games)
 
-    print("\n--- Similar Games ---")
-    for game in search_results:
-        print(f"Name: {game['name']}, \nDescription: {game['description']}, \nGenres: {game['genres']}, \nMetacritic Score: {game['metacritic_score']} \n\n\n")
+    # print("\n--- Similar Games ---")
+    # for game in search_results:
+    #     print(f"Name: {game['name']}, \nDescription: {game['description']}, \nGenres: {game['genres']}, \nMetacritic Score: {game['metacritic_score']} \n\n\n")
 
 
 
