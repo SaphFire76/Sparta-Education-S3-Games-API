@@ -45,6 +45,7 @@ def save_to_database(game_list):
             client.close()
             print("MongoDB connection closed.")
 
+
 def fetch_from_database(keys_to_fetch):
     """
     Connects to MongoDB, fetches specific fields for all game documents, 
@@ -91,3 +92,183 @@ def fetch_from_database(keys_to_fetch):
         if 'client' in locals():
             client.close()
             print("MongoDB connection closed.")
+
+
+def create_game(game):
+
+    load_dotenv()
+    mongo_uri = os.getenv("MONGODB_URI", "mongodb://localhost:27017/")
+
+    try:
+        client = MongoClient(mongo_uri)
+
+        db = client["video_game_db"]
+        collection = db["games"]
+
+        result = collection.insert_one(game)
+
+        print(f"Game created with ID: {result.inserted_id}")
+
+    except Exception as e:
+        print(f"Error creating game: {e}")
+
+    finally:
+        client.close()
+
+
+
+def read_high_metacritic_games():
+
+    load_dotenv()
+    mongo_uri = os.getenv("MONGODB_URI", "mongodb://localhost:27017/")
+
+    try:
+        client = MongoClient(mongo_uri)
+
+        db = client["video_game_db"]
+        collection = db["games"]
+
+        # Find games with a Metacritic score of 90 or higher
+        games = collection.find(
+            {
+                "metacritic_score": {
+                    "$gte": 90
+                }
+            },
+            {
+                "_id": 0,
+                "name": 1,
+                "metacritic_score": 1,
+                "release_date": 1,
+                "genres": 1
+            }
+        )
+
+        print("\n--- Highly Rated Metacritic Games ---")
+
+        for game in games:
+            pp.pprint(game)
+
+
+    except errors.ConnectionFailure as e:
+        print(f"Could not connect to MongoDB. Error: {e}")
+
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
+    finally:
+        if 'client' in locals():
+            client.close()
+            print("MongoDB connection closed.")
+
+
+def update_metacritic_score(game_name, new_score):
+
+    load_dotenv()
+    mongo_uri = os.getenv("MONGODB_URI", "mongodb://localhost:27017/")
+
+    try:
+        client = MongoClient(mongo_uri)
+
+        db = client["video_game_db"]
+        collection = db["games"]
+
+        result = collection.update_one(
+            {
+                "name": game_name
+            },
+            {
+                "$set": {
+                    "metacritic_score": new_score
+                }
+            }
+        )
+
+        if result.modified_count > 0:
+            print(f"{game_name} score updated to {new_score}")
+
+        else:
+            print("No game found or score already the same")
+
+    except Exception as e:
+        print(f"Error updating game: {e}")
+
+    finally:
+        client.close()
+
+
+def delete_game(game_name):
+
+    load_dotenv()
+    mongo_uri = os.getenv("MONGODB_URI", "mongodb://localhost:27017/")
+
+    try:
+
+        client = MongoClient(mongo_uri)
+
+        db = client["video_game_db"]
+        collection = db["games"]
+
+
+        result = collection.delete_one(
+            {
+                "name":game_name
+            }
+        )
+
+
+        print(
+            f"Deleted documents: {result.deleted_count}"
+        )
+
+
+    except Exception as e:
+        print(f"Error deleting game: {e}")
+
+    finally:
+        client.close()
+
+
+def games_by_platform():
+
+    load_dotenv()
+    mongo_uri = os.getenv("MONGODB_URI", "mongodb://localhost:27017/")
+
+    client = MongoClient(mongo_uri)
+
+    db = client["video_game_db"]
+    collection = db["games"]
+
+
+    pipeline = [
+
+        {
+            "$unwind": "$platforms"
+        },
+
+        {
+            "$group": {
+                "_id": "$platforms",
+                "total_games": {
+                    "$count": {}
+                }
+            }
+        },
+
+        {
+            "$sort": {
+                "total_games": -1
+            }
+        }
+
+    ]
+
+
+    results = collection.aggregate(pipeline)
+
+
+    for platform in results:
+        pp.pprint(platform)
+
+
+    client.close()
