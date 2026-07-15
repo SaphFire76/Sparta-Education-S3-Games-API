@@ -51,12 +51,6 @@ def run_pipeline():
 
     # save_to_database(games_with_embeddings)
 
-    # index = generate_faiss_index(games_with_embeddings)
-
-    # similar_games = search_similar_games(index, games_with_embeddings, "A thrilling open-world adventure game with dragons and magic.", k=3)
-
-    # print(similar_games)
-
 
     # Fetches all except vectors from db to insert into AWS S3
     gamesToUpload = fetch_from_database(['background_image', 'description', 'genres', 'platforms', 'metacritic_score', 'name', 'playtime_hours', 'publishers', 'release_date', 'slug', 'tba', 'tags', 'esrb_rating', 'developers', 'rawg_id'])
@@ -64,13 +58,6 @@ def run_pipeline():
     # Upload to S3
     save_to_s3(gamesToUpload)
 
-
-
-    # games = fetch_games_by_id(similar_games)
-
-    # print("\n--- Similar Games ---")
-    # for game in games:
-    #     print(f"Name: {game['name']}, Description: {game['description']}")
 
     # -----------TODO--------------
 
