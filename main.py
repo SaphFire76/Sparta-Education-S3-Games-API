@@ -76,7 +76,9 @@ if __name__ == "__main__":
 
     # index = generate_faiss_index(games_with_embeddings)
 
-    # similar_games = search_similar_games(index, games_with_embeddings, "A thrilling open-world adventure game with dragons and magic.", k=3)
+    user_query = input("Enter your query: ")
+
+    similar_games = search_similar_games(index, games_with_embeddings, user_query, k=3)
 
     # search_results = fetch_games_by_id(similar_games)
 
