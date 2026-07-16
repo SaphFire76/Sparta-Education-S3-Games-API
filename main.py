@@ -8,9 +8,9 @@ def run_pipeline():
     print("--- STARTING PIPELINE ---")
     
     #Extract game data from the RAWG API
-    # games = fetch_game_data()
+    games = fetch_game_data()
     #Save to MongoDB database
-    # save_to_database(games)
+    save_to_database(games)
 
     # #Create a new game document to insert into the database
 
@@ -51,17 +51,19 @@ def run_pipeline():
 
 
 
-
+    games = fetch_from_database(['description'])
     # Generate embeddings for the game descriptions
     games_with_embeddings = generate_embeddings(games)
     save_to_database(games_with_embeddings)
 
 
-    # Fetches all except vectors from db to insert into AWS S3
-    gamesToUpload = fetch_from_database(['background_image', 'description', 'genres', 'platforms', 'metacritic_score', 'name', 'playtime_hours', 'publishers', 'release_date', 'slug', 'tba', 'tags', 'esrb_rating', 'developers', 'rawg_id'])
 
-    # Upload to S3
-    save_to_s3(gamesToUpload)
+    #--------S3 Interaction: Uploading games to AWS S3 Bucket--------
+    # # Fetches all except vectors from db to insert into AWS S3
+    # gamesToUpload = fetch_from_database(['background_image', 'description', 'genres', 'platforms', 'metacritic_score', 'name', 'playtime_hours', 'publishers', 'release_date', 'slug', 'tba', 'tags', 'esrb_rating', 'developers', 'rawg_id'])
+
+    # # Upload to S3
+    # save_to_s3(gamesToUpload)
 
 
 
@@ -70,7 +72,7 @@ def run_pipeline():
 # This is a standard Python safeguard. It ensures the script only runs 
 # if you execute this file directly (e.g., 'python main.py')
 if __name__ == "__main__":
-    run_pipeline()
+    # run_pipeline()
 
     #Set up the FAISS index and perform a search for similar games based on user input
     games_with_embeddings = fetch_from_database(['vector'])
