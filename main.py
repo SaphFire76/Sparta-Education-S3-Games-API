@@ -7,11 +7,13 @@ from recommendation_algorithm import generate_embeddings, generate_faiss_index, 
 def run_pipeline():
     print("--- STARTING PIPELINE ---")
     
-    games = fetch_game_data()
-    
-    save_to_database(games)
+    #Extract game data from the RAWG API
+    # games = fetch_game_data()
+    #Save to MongoDB database
+    # save_to_database(games)
 
     # #Create a new game document to insert into the database
+
     # new_game = {
     #     "rawg_id": 123456,
     #     "slug": "New Game",
@@ -30,6 +32,10 @@ def run_pipeline():
     #     "background_image": "https://example.com/new-game-image.jpg"
     # }
 
+
+
+    #        -------Crud Operations on MongoDB Database-------
+
     # create_game(new_game)
 
     # Read and print games with a Metacritic score of 90 or higher
@@ -43,13 +49,12 @@ def run_pipeline():
     # Reads and prints the platform along with the total number of games available on that platform from the database.
     # games_by_platform()
 
- 
 
 
-    # # Generate embeddings for the game descriptions
-    # games_with_embeddings = generate_embeddings(games)
 
-    # save_to_database(games_with_embeddings)
+    # Generate embeddings for the game descriptions
+    games_with_embeddings = generate_embeddings(games)
+    save_to_database(games_with_embeddings)
 
 
     # Fetches all except vectors from db to insert into AWS S3
@@ -59,11 +64,6 @@ def run_pipeline():
     save_to_s3(gamesToUpload)
 
 
-    # -----------TODO--------------
-
-    # save_to_s3(games)
-
-    # -----------------------------
 
     print("--- PIPELINE COMPLETE ---")
 
@@ -72,19 +72,20 @@ def run_pipeline():
 if __name__ == "__main__":
     run_pipeline()
 
-    # games_with_embeddings = fetch_from_database(['vector'])
+    #Set up the FAISS index and perform a search for similar games based on user input
+    games_with_embeddings = fetch_from_database(['vector'])
 
-    # index = generate_faiss_index(games_with_embeddings)
+    index = generate_faiss_index(games_with_embeddings)
 
     user_query = input("Enter your query: ")
 
     similar_games = search_similar_games(index, games_with_embeddings, user_query, k=3)
 
-    # search_results = fetch_games_by_id(similar_games)
+    search_results = fetch_games_by_id(similar_games)
 
-    # print("\n--- Similar Games ---")
-    # for game in search_results:
-    #     print(f"Name: {game['name']}, \nDescription: {game['description']}, \nGenres: {game['genres']}, \nMetacritic Score: {game['metacritic_score']} \n\n\n")
+    print("\n--- Similar Games ---")
+    for game in search_results:
+        print(f"Name: {game['name']}, \nDescription: {game['description']}, \nGenres: {game['genres']}, \nMetacritic Score: {game['metacritic_score']} \n\n\n")
 
 
 

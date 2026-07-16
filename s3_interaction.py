@@ -9,12 +9,13 @@ def save_to_s3(games):
 
     load_dotenv()
 
-    bucket_name = "se-zain-testbucket"
+    bucket_name = "se-data-with-ai-etl-project"
 
     s3 = boto3.client("s3")
 
     # Save the games locally as JSON
     filename = "games.json"
+    s3_folder = "zain-abra/"
 
     with open(filename, "w", encoding="utf-8") as file:
         json.dump(games, file, indent=4)
@@ -23,7 +24,7 @@ def save_to_s3(games):
     s3.upload_file(
         filename,
         bucket_name,
-        filename
+        s3_folder + filename
     )
 
     print(f"{filename} uploaded successfully.")
@@ -33,8 +34,8 @@ def save_to_s3(games):
 def fetch_from_s3():
     s3 = boto3.client("s3")
 
-    bucket_name = "se-zain-testbucket"
-    file_name = "games.json"
+    bucket_name = "se-data-with-ai-etl-project"
+    file_name = "zain-abra/games.json"
 
     response = s3.get_object(
         Bucket=bucket_name,
