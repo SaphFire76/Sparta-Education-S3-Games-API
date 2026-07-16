@@ -8,9 +8,9 @@ def run_pipeline():
     print("--- STARTING PIPELINE ---")
     
     #Extract game data from the RAWG API
-    # games = fetch_game_data()
+    games = fetch_game_data()
     #Save to MongoDB database
-    # save_to_database(games)
+    save_to_database(games)
 
     # #Create a new game document to insert into the database
 
